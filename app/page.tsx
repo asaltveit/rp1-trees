@@ -1,4 +1,5 @@
 import Link from "next/link";
+import AlienBiomeDemo from "@/components/AlienBiomeDemo";
 
 export default function HomePage() {
   return (
@@ -113,6 +114,8 @@ export default function HomePage() {
           ))}
         </ul>
       </section>
+
+      <AlienBiomeDemo />
 
       {/* How it works */}
       <section

@@ -5,7 +5,6 @@ Exports tree mesh + textures as a binary glTF 2.0 (.glb).
 Compatible with WebXR. Textures are embedded as PNG blobs.
 """
 
-import io
 import json
 import logging
 import struct
@@ -158,9 +157,7 @@ def _export_pygltflib(mesh: TreeMesh) -> bytes:
     gltf.buffers = [Buffer(byteLength=len(binary_data))]
     gltf.set_binary_blob(bytes(binary_data))
 
-    buf = io.BytesIO()
-    gltf.save_to_bytes_io(buf)
-    glb_bytes = buf.getvalue()
+    glb_bytes = bytes(gltf.save_to_bytes())
     logger.info(f"GLB exported: {len(glb_bytes) / 1024:.0f} KB")
     return glb_bytes
 
