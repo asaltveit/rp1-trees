@@ -1,11 +1,11 @@
 {
   "functions": {
     "api/generate.py": {
-      "runtime": "python3.12",
+      "runtime": "@vercel/python@4.5.0",
       "maxDuration": 60
     },
     "api/biome.py": {
-      "runtime": "python3.12",
+      "runtime": "@vercel/python@4.5.0",
       "maxDuration": 60
     }
   }
