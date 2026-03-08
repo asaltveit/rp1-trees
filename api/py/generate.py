@@ -15,7 +15,7 @@ import sys
 from http.server import BaseHTTPRequestHandler
 
 # Add the plant library to path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "plant"))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

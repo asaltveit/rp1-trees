@@ -38,8 +38,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   // Step 1: Generate GLB(s) via Python serverless
   const pythonUrl =
     mode === "biome"
-      ? `${_baseUrl(req)}/api/biome`
-      : `${_baseUrl(req)}/api/generate`;
+      ? `${_baseUrl(req)}/api/py/biome`
+      : `${_baseUrl(req)}/api/py/generate`;
 
   let pythonData: PythonGenerateResponse;
   try {
