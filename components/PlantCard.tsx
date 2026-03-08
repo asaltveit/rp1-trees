@@ -7,6 +7,15 @@ interface PlantCardProps {
 
 export default function PlantCard({ plant, fabricUrl }: PlantCardProps) {
   const placed = plant.status === "placed";
+  const downloadName = `${plant.species_id || plant.plant_name || "plant"}.glb`
+    .toLowerCase()
+    .replace(/[^a-z0-9._-]+/g, "_");
+  const downloadUrl =
+    placed && plant.resourceUrl
+      ? `/api/download?url=${encodeURIComponent(plant.resourceUrl)}&filename=${encodeURIComponent(downloadName)}${
+          fabricUrl ? `&fabricUrl=${encodeURIComponent(fabricUrl)}` : ""
+        }`
+      : null;
 
   return (
     <div
@@ -81,6 +90,14 @@ export default function PlantCard({ plant, fabricUrl }: PlantCardProps) {
               style={{ color: "var(--forest-400)", textDecoration: "underline" }}
             >
               View GLB ↗
+            </a>
+          )}
+          {downloadUrl && (
+            <a
+              href={downloadUrl}
+              style={{ color: "var(--forest-200)", textDecoration: "underline" }}
+            >
+              Download GLB
             </a>
           )}
         </div>
