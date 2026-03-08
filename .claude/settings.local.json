@@ -10,7 +10,9 @@
       "Bash(npm install ssh2 @types/ssh2)",
       "Bash(npm install ssh2-sftp-client ws @types/ws)",
       "Bash(nvm use 22)",
-      "Bash(npm run build)"
+      "Bash(npm run build)",
+      "Bash(python3 -c \"import pygltflib; import inspect; src = inspect.getsource\\(pygltflib.GLTF2.save_to_bytes\\); print\\(src[800:]\\)\")",
+      "Bash(python3 -c \":*)"
     ]
   }
 }

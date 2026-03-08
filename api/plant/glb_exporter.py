@@ -157,7 +157,7 @@ def _export_pygltflib(mesh: TreeMesh) -> bytes:
     gltf.buffers = [Buffer(byteLength=len(binary_data))]
     gltf.set_binary_blob(bytes(binary_data))
 
-    glb_bytes = bytes(gltf.save_to_bytes())
+    glb_bytes = b"".join(gltf.save_to_bytes())
     logger.info(f"GLB exported: {len(glb_bytes) / 1024:.0f} KB")
     return glb_bytes
 
