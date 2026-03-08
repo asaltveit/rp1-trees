@@ -13,6 +13,7 @@ export interface ManifoldConfig {
 
 export interface GenerateRequest {
   mode: "single" | "biome";
+  outputMode?: "manifold" | "download";
   description?: string;       // for single mode
   theme?: string;             // for biome mode
   seed?: number;
@@ -37,6 +38,7 @@ export interface PlantResult {
 export interface PlacedPlant {
   objectId: string;
   resourceUrl: string;
+  downloadUrl?: string;
   plant_name: string;
   species_id: string;
   x: number;

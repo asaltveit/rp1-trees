@@ -29,9 +29,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
-  const { mode, description, theme, seed, baseX, baseZ, manifoldConfig } = body;
+  const { mode, outputMode = "manifold", description, theme, seed, baseX, baseZ, manifoldConfig } = body;
 
-  if (!manifoldConfig?.fabricUrl) {
+  if (outputMode === "manifold" && !manifoldConfig?.fabricUrl) {
     return NextResponse.json({ error: "manifoldConfig.fabricUrl is required" }, { status: 400 });
   }
 
@@ -65,7 +65,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     );
   }
 
-  // Step 2 + 3: Upload & place each plant
+  // Step 2 + 3: Upload & place each plant (or return download links)
   const results: PlacedPlant[] = [];
   let sceneRef: { scopeId: string; rootObjectId: string } | null = null;
 
@@ -89,6 +89,21 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     }
 
     try {
+      if (outputMode === "download") {
+        results.push({
+          objectId: "",
+          resourceUrl: "",
+          downloadUrl: `data:model/gltf-binary;base64,${plant.glb_b64}`,
+          plant_name: plant.plant_name,
+          species_id: plant.species_id,
+          x,
+          z,
+          status: "placed",
+          glb_size_kb: plant.glb_size_kb,
+        });
+        continue;
+      }
+
       // Upload GLB
       const glbBuffer = Buffer.from(plant.glb_b64, "base64");
       const fileName = `${_slugify(plant.plant_name)}_${Date.now()}.glb`;

@@ -23,6 +23,8 @@ const defaultConfig: ManifoldConfig = {
 
 export default function GeneratePage() {
   const [mode, setMode] = useState<"single" | "biome">("single");
+  const [outputMode, setOutputMode] = useState<"manifold" | "download">("manifold");
+  const [resultOutputMode, setResultOutputMode] = useState<"manifold" | "download">("manifold");
   const [description, setDescription] = useState("");
   const [theme, setTheme] = useState("Temperate Forest");
   const [baseX, setBaseX] = useState(0);
@@ -64,7 +66,7 @@ export default function GeneratePage() {
     !loading &&
     ((mode === "single" && description.trim()) ||
       (mode === "biome" && theme.trim())) &&
-    manifoldConfig.fabricUrl.trim();
+    (outputMode === "download" || manifoldConfig.fabricUrl.trim());
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -76,11 +78,13 @@ export default function GeneratePage() {
     setStatusMsg(mode === "biome" ? "Generating biome plants…" : "Generating plant…");
 
     try {
+      const requestedOutputMode = outputMode;
       const res = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           mode,
+          outputMode: requestedOutputMode,
           description: description.trim() || undefined,
           theme: theme.trim() || undefined,
           seed: seed ? parseInt(seed) : undefined,
@@ -97,8 +101,13 @@ export default function GeneratePage() {
       }
 
       setResults(data.results);
-      const placed = data.results.filter((r) => r.status === "placed").length;
-      setStatusMsg(`Done — ${placed} of ${data.results.length} plant(s) placed.`);
+      setResultOutputMode(requestedOutputMode);
+      const succeeded = data.results.filter((r) => r.status === "placed").length;
+      setStatusMsg(
+        requestedOutputMode === "manifold"
+          ? `Done — ${succeeded} of ${data.results.length} plant(s) placed.`
+          : `Done — ${succeeded} of ${data.results.length} plant(s) generated for download.`
+      );
     } catch (err) {
       setError((err as Error).message);
       setStatusMsg("");
@@ -128,7 +137,7 @@ export default function GeneratePage() {
           Plant Generator
         </h1>
         <p style={{ color: "var(--forest-500)", marginBottom: "2rem", fontSize: "0.9rem" }}>
-          Generate fractal 3D plants and place them in your Manifold Fabric scene.
+          Generate fractal 3D plants and either place them in Manifold or download GLB files.
         </p>
 
         <form onSubmit={handleSubmit}>
@@ -205,16 +214,18 @@ export default function GeneratePage() {
                     fontFamily: "var(--font-inter, sans-serif)",
                   }}
                 >
-                  Manifold Connection
+                  Output & Connection
                 </h2>
                 <ManifoldConnectionForm
                   config={manifoldConfig}
+                  outputMode={outputMode}
+                  onOutputModeChange={setOutputMode}
                   onChange={handleConfigChange}
                 />
               </div>
 
               {/* Placement map */}
-              {results.length > 0 && (
+              {resultOutputMode === "manifold" && results.length > 0 && (
                 <div className="card">
                   <PlacementMap plants={results} baseX={baseX} baseZ={baseZ} />
                 </div>
@@ -245,7 +256,8 @@ export default function GeneratePage() {
                   fontWeight: 400,
                 }}
               >
-                {results.filter((r) => r.status === "placed").length} placed ·{" "}
+                {results.filter((r) => r.status === "placed").length}{" "}
+                {resultOutputMode === "manifold" ? "placed" : "generated"} ·{" "}
                 {results.filter((r) => r.status === "error").length} errors
               </span>
             </h2>
@@ -254,7 +266,7 @@ export default function GeneratePage() {
                 <PlantCard
                   key={plant.objectId || i}
                   plant={plant}
-                  fabricUrl={manifoldConfig.fabricUrl}
+                  fabricUrl={resultOutputMode === "manifold" ? manifoldConfig.fabricUrl : undefined}
                 />
               ))}
             </div>
