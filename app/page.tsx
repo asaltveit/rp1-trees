@@ -213,82 +213,82 @@ export default function HomePage() {
   );
 }
 
-// Pure SVG fractal tree illustration
+// L-system fractal tree illustration (Prusinkiewicz plant, 5 iterations)
 function FractalTreeSVG() {
+  const W = 320, H = 420;
+
+  // Expand L-system
+  const rules: Record<string, string> = { X: "F+[[X]-X]-F[-FX]+X", F: "FF" };
+  let str = "X";
+  for (let i = 0; i < 5; i++) str = [...str].map(c => rules[c] ?? c).join("");
+
+  // Turtle walk → segments
+  type Seg = { x1: number; y1: number; x2: number; y2: number; d: number };
+  const segs: Seg[] = [];
+  const stk: { x: number; y: number; a: number; d: number }[] = [];
+  let px = 0, py = 0, angle = -90, depth = 0;
+  const STEP = 4, DEG2RAD = Math.PI / 180;
+
+  for (const c of str) {
+    if (c === "F") {
+      const nx = px + STEP * Math.cos(angle * DEG2RAD);
+      const ny = py + STEP * Math.sin(angle * DEG2RAD);
+      segs.push({ x1: px, y1: py, x2: nx, y2: ny, d: depth });
+      px = nx; py = ny;
+    } else if (c === "+") angle += 25;
+    else if (c === "-") angle -= 25;
+    else if (c === "[") { stk.push({ x: px, y: py, a: angle, d: depth }); depth++; }
+    else if (c === "]") { const s = stk.pop()!; px = s.x; py = s.y; angle = s.a; depth = s.d; }
+  }
+
+  // Fit bounding box into SVG canvas
+  let bx0 = Infinity, bx1 = -Infinity, by0 = Infinity, by1 = -Infinity;
+  for (const s of segs) {
+    bx0 = Math.min(bx0, s.x1, s.x2); bx1 = Math.max(bx1, s.x1, s.x2);
+    by0 = Math.min(by0, s.y1, s.y2); by1 = Math.max(by1, s.y1, s.y2);
+  }
+  const PAD = 20, GPAD = 28;
+  const scale = Math.min((W - 2 * PAD) / (bx1 - bx0), (H - 2 * PAD - GPAD) / (by1 - by0));
+  const ox = W / 2;            // trunk base (turtle x=0) maps to canvas centre
+  const oy = PAD - by0 * scale;
+  const sx = (v: number) => v * scale + ox;
+  const sy = (v: number) => v * scale + oy;
+
+  const maxD = Math.max(...segs.map(s => s.d));
+  // Color: brown bark (#8B5E3C) → green tips (#8DC46C)
+  const color = (d: number) => {
+    const t = d / maxD;
+    return `rgb(${Math.round(139 + 2 * t)},${Math.round(94 + 102 * t)},${Math.round(60 + 48 * t)})`;
+  };
+  // Width tapers with depth
+  const strokeW = (d: number) => Math.max(0.8, 5.5 * Math.pow(1 - d / maxD, 1.4));
+
+  const groundY = sy(by1) + 14;
+  const glowCY = sy(by0 + (by1 - by0) * 0.45);
+
   return (
-    <svg
-      width="320"
-      height="400"
-      viewBox="0 0 320 400"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      role="img"
-      aria-label="Fractal tree illustration"
-    >
-      {/* Ground */}
-      <ellipse cx="160" cy="385" rx="80" ry="10" fill="rgba(74,124,47,0.15)" />
-
-      {/* Trunk */}
-      <line x1="160" y1="385" x2="160" y2="280" stroke="#8B5E3C" strokeWidth="8" strokeLinecap="round" />
-
-      {/* Level 1 branches */}
-      <line x1="160" y1="280" x2="120" y2="230" stroke="#8B5E3C" strokeWidth="5" strokeLinecap="round" />
-      <line x1="160" y1="280" x2="200" y2="230" stroke="#8B5E3C" strokeWidth="5" strokeLinecap="round" />
-      <line x1="160" y1="280" x2="160" y2="220" stroke="#8B5E3C" strokeWidth="5" strokeLinecap="round" />
-
-      {/* Level 2 branches - left */}
-      <line x1="120" y1="230" x2="95" y2="195" stroke="#72ab54" strokeWidth="3" strokeLinecap="round" />
-      <line x1="120" y1="230" x2="140" y2="195" stroke="#72ab54" strokeWidth="3" strokeLinecap="round" />
-      {/* Level 2 branches - centre */}
-      <line x1="160" y1="220" x2="140" y2="185" stroke="#72ab54" strokeWidth="3" strokeLinecap="round" />
-      <line x1="160" y1="220" x2="180" y2="185" stroke="#72ab54" strokeWidth="3" strokeLinecap="round" />
-      <line x1="160" y1="220" x2="160" y2="180" stroke="#72ab54" strokeWidth="3" strokeLinecap="round" />
-      {/* Level 2 branches - right */}
-      <line x1="200" y1="230" x2="180" y2="195" stroke="#72ab54" strokeWidth="3" strokeLinecap="round" />
-      <line x1="200" y1="230" x2="220" y2="195" stroke="#72ab54" strokeWidth="3" strokeLinecap="round" />
-
-      {/* Level 3 branches */}
-      {[
-        [95, 195, 78, 170], [95, 195, 108, 168],
-        [140, 195, 125, 168], [140, 195, 152, 168],
-        [140, 185, 126, 160], [140, 185, 150, 158],
-        [180, 185, 166, 160], [180, 185, 192, 158],
-        [160, 180, 148, 155], [160, 180, 172, 155], [160, 180, 160, 150],
-        [180, 195, 168, 168], [180, 195, 194, 168],
-        [220, 195, 208, 168], [220, 195, 232, 168],
-      ].map(([x1, y1, x2, y2], i) => (
-        <line
-          key={i}
-          x1={x1} y1={y1} x2={x2} y2={y2}
-          stroke="#8dc46c"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
+    <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} fill="none"
+      xmlns="http://www.w3.org/2000/svg" role="img" aria-label="L-system fractal tree">
+      <defs>
+        <radialGradient id="canopy-glow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="rgba(141,196,108,0.4)" />
+          <stop offset="65%" stopColor="rgba(141,196,108,0.15)" />
+          <stop offset="100%" stopColor="rgba(141,196,108,0)" />
+        </radialGradient>
+      </defs>
+      {/* Canopy glow */}
+      <ellipse cx={W / 2} cy={glowCY} rx={145} ry={115} fill="url(#canopy-glow)" />
+      {/* Ground shadow */}
+      <ellipse cx={W / 2} cy={groundY} rx={65} ry={8} fill="rgba(74,124,47,0.2)" />
+      {/* Branches */}
+      {segs.map((s, i) => (
+        <line key={i} x1={sx(s.x1)} y1={sy(s.y1)} x2={sx(s.x2)} y2={sy(s.y2)}
+          stroke={color(s.d)} strokeWidth={strokeW(s.d)} strokeLinecap="round" />
       ))}
-
-      {/* Leaf clusters */}
-      {[
-        [78, 162], [108, 160], [125, 160], [152, 160],
-        [126, 152], [150, 150], [148, 147], [160, 142],
-        [172, 147], [166, 152], [192, 150], [168, 160],
-        [194, 160], [208, 160], [232, 160],
-      ].map(([cx, cy], i) => (
-        <g key={i}>
-          <ellipse
-            cx={cx} cy={cy}
-            rx={10 + (i % 3) * 2}
-            ry={8 + (i % 2) * 2}
-            fill={`rgba(${i % 2 ? "141,196,108" : "72,171,84"},0.${5 + (i % 4)})`}
-          />
-        </g>
+      {/* Leaf dots at branch tips */}
+      {segs.filter(s => s.d >= maxD - 1).map((s, i) => (
+        <circle key={i} cx={sx(s.x2)} cy={sy(s.y2)} r={2.5} fill="rgba(141,196,108,0.65)" />
       ))}
-
-      {/* Glow effect */}
-      <radialGradient id="glow" cx="50%" cy="40%" r="50%">
-        <stop offset="0%" stopColor="rgba(141,196,108,0.15)" />
-        <stop offset="100%" stopColor="rgba(141,196,108,0)" />
-      </radialGradient>
-      <ellipse cx="160" cy="180" rx="130" ry="120" fill="url(#glow)" />
     </svg>
   );
 }

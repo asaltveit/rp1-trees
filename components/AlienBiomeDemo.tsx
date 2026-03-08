@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 
-// Step 0 runs for 2900ms, step 1 for 1800ms, step 2 for 3600ms
-const STEP_DURATIONS = [2900, 1800, 3600];
+// Step 0 runs for 2900ms, step 1 for 450ms, step 2 for 3600ms
+const STEP_DURATIONS = [2900, 300, 500];
 
 // ─── Alien plant data ────────────────────────────────────────────────────────
 
@@ -14,7 +14,7 @@ const ALIEN_PLANTS = [
     height: "4.2 m",
     spread: "2.8 m",
     variant: "xenophyte" as const,
-    stroke: "#06b6d4",
+    stroke: "#06b6d4",  
     glow: "rgba(6,182,212,0.18)",
   },
   {
@@ -131,15 +131,20 @@ const BIOME_OPTIONS = [
 
 // ─── Animated Step 0 ──────────────────────────────────────────────────────────
 
-function AnimatedStep0() {
+function AnimatedStep0({ onAdvance }: { onAdvance: () => void }) {
   const [phase, setPhase] = useState<0|1|2|3|4|5|6|7>(0);
 
   useEffect(() => {
     const timers = PHASE_TIMES.map((t, i) =>
       setTimeout(() => setPhase((i + 1) as 1|2|3|4|5|6|7), t)
     );
-    return () => timers.forEach(clearTimeout);
-  }, []);
+    // Advance to loading slide 150ms after the click (PHASE_TIMES[6] = phase 7 fires)
+    const advanceTimer = setTimeout(onAdvance, PHASE_TIMES[6] + 150);
+    return () => {
+      timers.forEach(clearTimeout);
+      clearTimeout(advanceTimer);
+    };
+  }, [onAdvance]);
 
   const dropdownOpen = phase >= 2 && phase <= 3;
   const itemSelected = phase >= 4;
@@ -511,17 +516,21 @@ export default function AlienBiomeDemo() {
   const [paused, setPaused] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  const advanceStep = useCallback(() => {
+    // Clear any pending timer then immediately advance
+    if (timerRef.current) clearTimeout(timerRef.current);
+    setStep((s) => {
+      const next = (s + 1) % 3;
+      if (next === 0) setCycleKey((k) => k + 1);
+      return next;
+    });
+  }, []);
+
   useEffect(() => {
     if (paused) return;
-    timerRef.current = setTimeout(() => {
-      setStep((s) => {
-        const next = (s + 1) % 3;
-        if (next === 0) setCycleKey((k) => k + 1);
-        return next;
-      });
-    }, STEP_DURATIONS[step]);
+    timerRef.current = setTimeout(advanceStep, STEP_DURATIONS[step]);
     return () => { if (timerRef.current) clearTimeout(timerRef.current); };
-  }, [step, paused]);
+  }, [step, paused, advanceStep]);
 
   const STEP_LABELS = [
     "Step 1 of 3: Selecting alien biome",
@@ -569,7 +578,7 @@ export default function AlienBiomeDemo() {
 
         {/* Fixed-height stage — tall enough for open dropdown + breathing room */}
         <div style={{ height: 380, position: "relative" }}>
-          {step === 0 && <AnimatedStep0 key={cycleKey} />}
+          {step === 0 && <AnimatedStep0 key={cycleKey} onAdvance={advanceStep} />}
           {step === 1 && <Step1 />}
           {step === 2 && <Step2 />}
         </div>
