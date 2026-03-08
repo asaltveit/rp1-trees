@@ -1,26 +1,120 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  --forest-950: #0d1a07;
+  --forest-900: #1a2e0d;
+  --forest-800: #2D5016;
+  --forest-700: #3a6b1d;
+  --forest-600: #4A7C2F;
+  --forest-500: #5c9440;
+  --forest-400: #72ab54;
+  --forest-300: #8dc46c;
+  --forest-200: #A8D8A8;
+  --forest-100: #d4edcc;
+  --forest-50:  #eef7ea;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --bark-900: #3d2008;
+  --bark-800: #5c3210;
+  --bark-700: #8B5E3C;
+  --bark-600: #a87046;
+  --bark-500: #c48558;
+  --bark-400: #d9a070;
+  --bark-300: #e8bc94;
+  --bark-200: #f0d4b8;
+  --bark-100: #F5F0E8;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--forest-950);
+  color: var(--forest-100);
+  font-family: "Inter", system-ui, sans-serif;
+  min-height: 100vh;
+}
+
+h1, h2, h3 {
+  font-family: "Merriweather", Georgia, serif;
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--forest-900); }
+::-webkit-scrollbar-thumb { background: var(--forest-700); border-radius: 3px; }
+
+*:focus-visible {
+  outline: 2px solid var(--forest-400);
+  outline-offset: 2px;
+}
+
+/* Subtle leaf vein pattern for background sections */
+.leaf-bg {
+  background-image: radial-gradient(
+    ellipse at 30% 20%,
+    rgba(74, 124, 47, 0.08) 0%,
+    transparent 60%
+  ),
+  radial-gradient(
+    ellipse at 70% 80%,
+    rgba(45, 80, 22, 0.1) 0%,
+    transparent 50%
+  );
+}
+
+.glass {
+  background: rgba(26, 46, 13, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(74, 124, 47, 0.3);
+}
+
+.btn-primary {
+  background-color: var(--forest-600);
+  color: var(--forest-50);
+  border: 1px solid var(--forest-500);
+  padding: 0.625rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition: background-color 0.15s, transform 0.1s;
+  cursor: pointer;
+}
+.btn-primary:hover { background-color: var(--forest-500); }
+.btn-primary:active { transform: scale(0.98); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+.btn-secondary {
+  background-color: transparent;
+  color: var(--forest-300);
+  border: 1px solid var(--forest-700);
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  transition: background-color 0.15s;
+  cursor: pointer;
+}
+.btn-secondary:hover { background-color: rgba(74, 124, 47, 0.15); }
+
+.input {
+  background-color: rgba(13, 26, 7, 0.8);
+  border: 1px solid var(--forest-700);
+  color: var(--forest-100);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  width: 100%;
+  transition: border-color 0.15s;
+}
+.input:focus { border-color: var(--forest-400); outline: none; }
+.input::placeholder { color: var(--forest-700); }
+
+.label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--forest-400);
+  margin-bottom: 0.375rem;
+}
+
+.card {
+  background: rgba(26, 46, 13, 0.5);
+  border: 1px solid rgba(74, 124, 47, 0.2);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
 }

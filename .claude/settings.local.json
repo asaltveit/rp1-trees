@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx create-next-app@latest . --typescript --tailwind --eslint --app --no-src-dir --import-alias \"@/*\" --yes)",
+      "Bash(/usr/local/bin/npx create-next-app@latest . --typescript --tailwind --eslint --app --no-src-dir --import-alias \"@/*\" --yes)",
+      "Bash(source ~/.nvm/nvm.sh)",
+      "Bash(nvm use 20)",
+      "Bash(node --version)",
+      "Bash(npx create-next-app@latest /tmp/plant-app --typescript --tailwind --eslint --app --no-src-dir --import-alias \"@/*\" --yes)",
+      "Bash(npm install ssh2 @types/ssh2)",
+      "Bash(npm install ssh2-sftp-client ws @types/ws)",
+      "Bash(nvm use 22)",
+      "Bash(npm run build)"
+    ]
+  }
+}
