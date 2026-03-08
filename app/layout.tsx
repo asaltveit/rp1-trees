@@ -93,6 +93,8 @@ function TreeIcon() {
       strokeLinecap="round"
       strokeLinejoin="round"
       style={{ color: "var(--forest-400)" }}
+      aria-hidden="true"
+      focusable="false"
     >
       <path d="M12 22V13" />
       <path d="M12 13L7 8" />

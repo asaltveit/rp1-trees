@@ -35,7 +35,7 @@ export default function PlacementMap({ plants, baseX, baseZ }: PlacementMapProps
           gap: "0.5rem",
         }}
       >
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
           <circle cx="12" cy="12" r="10" />
           <line x1="12" y1="8" x2="12" y2="12" />
           <line x1="12" y1="16" x2="12.01" y2="16" />
@@ -91,6 +91,8 @@ export default function PlacementMap({ plants, baseX, baseZ }: PlacementMapProps
       <svg
         width={SVG_SIZE}
         height={SVG_SIZE}
+        role="img"
+        aria-label={`Placement map showing ${plants.length} plant${plants.length !== 1 ? "s" : ""}`}
         style={{
           background: "rgba(13,26,7,0.8)",
           border: "1px solid rgba(74,124,47,0.25)",
@@ -117,8 +119,14 @@ export default function PlacementMap({ plants, baseX, baseZ }: PlacementMapProps
           return (
             <g
               key={plant.objectId || `${plant.x}-${plant.z}`}
+              role="button"
+              tabIndex={0}
+              aria-label={`${plant.plant_name} at (${plant.x.toFixed(1)}, ${plant.z.toFixed(1)}) metres — ${plant.status}`}
               onMouseEnter={() => setHovered(plant.objectId)}
               onMouseLeave={() => setHovered(null)}
+              onFocus={() => setHovered(plant.objectId)}
+              onBlur={() => setHovered(null)}
+              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") setHovered(plant.objectId); }}
               style={{ cursor: "default" }}
             >
               <circle cx={cx} cy={cy} r={isHov ? 7 : 5}

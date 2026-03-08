@@ -73,6 +73,21 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const x = baseX + (plant.x_offset ?? 0);
     const z = baseZ + (plant.z_offset ?? 0);
 
+    // Guard: Python function returned an error for this plant
+    if (!plant.glb_b64) {
+      results.push({
+        objectId: "",
+        resourceUrl: "",
+        plant_name: plant.plant_name ?? "Unknown",
+        species_id: plant.species_id ?? "unknown",
+        x,
+        z,
+        status: "error",
+        errorMessage: (plant as any).error ?? "Plant generation returned no data",
+      });
+      continue;
+    }
+
     try {
       // Upload GLB
       const glbBuffer = Buffer.from(plant.glb_b64, "base64");

@@ -8,6 +8,8 @@ interface ModeToggleProps {
 export default function ModeToggle({ mode, onChange }: ModeToggleProps) {
   return (
     <div
+      role="group"
+      aria-label="Generation mode"
       style={{
         display: "inline-flex",
         background: "rgba(13,26,7,0.8)",
@@ -20,7 +22,9 @@ export default function ModeToggle({ mode, onChange }: ModeToggleProps) {
       {(["single", "biome"] as const).map((m) => (
         <button
           key={m}
+          type="button"
           onClick={() => onChange(m)}
+          aria-pressed={mode === m}
           style={{
             padding: "0.45rem 1.25rem",
             borderRadius: "0.45rem",
@@ -33,7 +37,8 @@ export default function ModeToggle({ mode, onChange }: ModeToggleProps) {
             color: mode === m ? "var(--forest-50)" : "var(--forest-500)",
           }}
         >
-          {m === "single" ? "🌱 Single Plant" : "🌲 Biome Set"}
+          <span aria-hidden="true">{m === "single" ? "🌱" : "🌲"}</span>{" "}
+          {m === "single" ? "Single Plant" : "Biome Set"}
         </button>
       ))}
     </div>

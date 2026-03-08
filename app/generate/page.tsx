@@ -113,6 +113,11 @@ export default function GeneratePage() {
       style={{ minHeight: "calc(100vh - 57px)", padding: "2rem 1.5rem" }}
     >
       <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+        {/* Persistent live region — always mounted so screen readers pick up changes */}
+        <div aria-live="polite" aria-atomic="true" className="sr-only">
+          {statusMsg || (error ? `Error: ${error}` : "")}
+        </div>
+
         <h1
           style={{
             fontSize: "1.75rem",
@@ -164,12 +169,14 @@ export default function GeneratePage() {
                     <Spinner /> {statusMsg || "Generating…"}
                   </span>
                 ) : (
-                  `🌱 ${mode === "biome" ? "Generate Biome" : "Generate Plant"}`
+                  <><span aria-hidden="true">🌱</span>{" "}{mode === "biome" ? "Generate Biome" : "Generate Plant"}</>
+
                 )}
               </button>
 
               {error && (
                 <div
+                  role="alert"
                   style={{
                     padding: "0.875rem",
                     borderRadius: "0.5rem",
@@ -268,6 +275,7 @@ function Spinner() {
       stroke="currentColor"
       strokeWidth="2.5"
       strokeLinecap="round"
+      aria-hidden="true"
       style={{
         animation: "spin 0.8s linear infinite",
       }}

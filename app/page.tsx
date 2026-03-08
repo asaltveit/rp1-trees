@@ -74,12 +74,15 @@ export default function HomePage() {
 
       {/* Feature pills */}
       <section style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 1.5rem 4rem" }}>
-        <div
+        <ul
           style={{
             display: "flex",
             gap: "1rem",
             flexWrap: "wrap",
             justifyContent: "center",
+            listStyle: "none",
+            padding: 0,
+            margin: 0,
           }}
         >
           {[
@@ -90,7 +93,7 @@ export default function HomePage() {
             { icon: "🌍", label: "Biome Sets" },
             { icon: "🎲", label: "Seed Reproducible" },
           ].map(({ icon, label }) => (
-            <span
+            <li
               key={label}
               style={{
                 display: "inline-flex",
@@ -105,10 +108,10 @@ export default function HomePage() {
                 fontWeight: 500,
               }}
             >
-              {icon} {label}
-            </span>
+              <span aria-hidden="true">{icon}</span> {label}
+            </li>
           ))}
-        </div>
+        </ul>
       </section>
 
       {/* How it works */}
@@ -216,6 +219,7 @@ function FractalTreeSVG() {
       viewBox="0 0 320 400"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      role="img"
       aria-label="Fractal tree illustration"
     >
       {/* Ground */}

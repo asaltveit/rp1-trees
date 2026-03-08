@@ -76,16 +76,15 @@ export default function ManifoldConnectionForm({ config, onChange }: ManifoldCon
         >
           {testing ? "Testing…" : "Test Connection"}
         </button>
-        {testResult && (
-          <span
-            style={{
-              fontSize: "0.8rem",
-              color: testResult.ok ? "var(--forest-400)" : "#f87171",
-            }}
-          >
-            {testResult.ok ? "✓ Reachable" : `✗ ${testResult.error ?? "Failed"}`}
-          </span>
-        )}
+        <span
+          aria-live="polite"
+          style={{
+            fontSize: "0.8rem",
+            color: testResult?.ok ? "var(--forest-400)" : "#f87171",
+          }}
+        >
+          {testResult && (testResult.ok ? "✓ Reachable" : `✗ ${testResult.error ?? "Failed"}`)}
+        </span>
       </div>
 
       {/* SCP / SFTP section (collapsible) */}
@@ -93,6 +92,8 @@ export default function ManifoldConnectionForm({ config, onChange }: ManifoldCon
         <button
           type="button"
           onClick={() => setShowScp(!showScp)}
+          aria-expanded={showScp}
+          aria-controls="sftp-panel"
           style={{
             background: "none",
             border: "none",
@@ -108,12 +109,13 @@ export default function ManifoldConnectionForm({ config, onChange }: ManifoldCon
             padding: 0,
           }}
         >
-          <span style={{ transform: showScp ? "rotate(90deg)" : "none", display: "inline-block", transition: "transform 0.15s" }}>▶</span>
+          <span aria-hidden="true" style={{ transform: showScp ? "rotate(90deg)" : "none", display: "inline-block", transition: "transform 0.15s" }}>▶</span>
           File Transfer (SFTP)
         </button>
 
         {showScp && (
           <div
+            id="sftp-panel"
             style={{
               display: "flex",
               flexDirection: "column",

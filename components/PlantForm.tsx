@@ -47,8 +47,9 @@ export default function PlantForm({
             value={description}
             onChange={(e) => onChange("description", e.target.value)}
             style={{ resize: "vertical", minHeight: "100px" }}
+            aria-describedby="description-hint"
           />
-          <p style={{ fontSize: "0.75rem", color: "var(--forest-600)", marginTop: "0.4rem" }}>
+          <p id="description-hint" style={{ fontSize: "0.75rem", color: "var(--forest-600)", marginTop: "0.4rem" }}>
             Describe any real or fictional plant. Claude will generate an L-system grammar for it.
           </p>
         </div>
@@ -69,6 +70,7 @@ export default function PlantForm({
               }
             }}
             style={{ marginBottom: "0.5rem" }}
+            aria-describedby="biome-hint"
           >
             {BIOME_PRESETS.map((p) => (
               <option key={p} value={p}>
@@ -77,23 +79,30 @@ export default function PlantForm({
             ))}
           </select>
           {(isCustomBiome || theme === "") && (
-            <input
-              type="text"
-              className="input"
-              placeholder="Describe your world or biome…"
-              value={theme}
-              onChange={(e) => onChange("theme", e.target.value)}
-            />
+            <>
+              <label className="label" htmlFor="custom-biome" style={{ marginTop: "0.5rem" }}>
+                Custom Biome
+              </label>
+              <input
+                id="custom-biome"
+                type="text"
+                className="input"
+                placeholder="Describe your world or biome…"
+                value={theme}
+                onChange={(e) => onChange("theme", e.target.value)}
+                aria-describedby="biome-hint"
+              />
+            </>
           )}
-          <p style={{ fontSize: "0.75rem", color: "var(--forest-600)", marginTop: "0.4rem" }}>
+          <p id="biome-hint" style={{ fontSize: "0.75rem", color: "var(--forest-600)", marginTop: "0.4rem" }}>
             Claude will generate 3–7 varied plants suited to this environment.
           </p>
         </div>
       )}
 
       {/* Coordinates */}
-      <div>
-        <label className="label">Placement Coordinates (metres)</label>
+      <fieldset style={{ border: "none", padding: 0, margin: 0 }}>
+        <legend className="label" style={{ marginBottom: "0.375rem" }}>Placement Coordinates (metres)</legend>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
           <div>
             <label
@@ -109,6 +118,7 @@ export default function PlantForm({
               step="0.5"
               value={baseX}
               onChange={(e) => onChange("baseX", parseFloat(e.target.value) || 0)}
+              aria-describedby={mode === "biome" ? "coords-hint" : undefined}
             />
           </div>
           <div>
@@ -125,15 +135,16 @@ export default function PlantForm({
               step="0.5"
               value={baseZ}
               onChange={(e) => onChange("baseZ", parseFloat(e.target.value) || 0)}
+              aria-describedby={mode === "biome" ? "coords-hint" : undefined}
             />
           </div>
         </div>
         {mode === "biome" && (
-          <p style={{ fontSize: "0.75rem", color: "var(--forest-600)", marginTop: "0.4rem" }}>
+          <p id="coords-hint" style={{ fontSize: "0.75rem", color: "var(--forest-600)", marginTop: "0.4rem" }}>
             Individual plants will be offset relative to this centre point.
           </p>
         )}
-      </div>
+      </fieldset>
 
       {/* Seed */}
       <div>
