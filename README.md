@@ -4,7 +4,7 @@
 
 Website: https://rp1-trees.vercel.app/
 
-Won 2nd place in the Remote Track at the Open Metaverse Hackathon @ The Immersive Commons (GDC Weekend).
+Won 2nd place in the Remote Track at the Open Metaverse Hackathon.
 
 ---
 
