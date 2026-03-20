@@ -2,7 +2,7 @@
 
 **The go-to plant provider for the Metaverse.** Grow any plant or biome from a text description. Claude interprets your words into L-system grammar rules, generates fractal 3D trees, exports them as `.glb` files, and places them directly into your RP1 Metaverse scene via Manifold Fabric.
 
-Website: https://rp1-trees.vercel.app/
+Website: https://rp1-trees.vercel.app/ (Generation doesn't work right now - no API key provided)
 
 Won 2nd place in the Remote Track at the Open Metaverse Hackathon.
 
