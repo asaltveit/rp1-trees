@@ -9,9 +9,9 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@types/ssh2": "^1.15.5",
+    "@types/ssh2": "^1.15.6",
     "@types/ws": "^8.18.1",
-    "next": "16.3.3",
+    "next": "16.3.4",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "ssh2": "^1.17.0",
